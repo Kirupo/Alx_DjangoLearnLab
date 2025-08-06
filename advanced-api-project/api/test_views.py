@@ -66,3 +66,24 @@ class BookAPITestCase(APITestCase):
         url = reverse('book-list')
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+class AuthorListViewTest(APITestCase):
+    def setUp(self):
+        Author.objects.create(name="Test Author")
+
+    def test_author_list_status_code_and_data(self):
+        url = reverse('author-list')  # Make sure your url name is correct
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('Test Author', str(response.data))  # This checks response.data content
+
+class BookListViewTest(APITestCase):
+    def setUp(self):
+        author = Author.objects.create(name="Book Author")
+        Book.objects.create(title="Test Book", author=author, publication_year=2020)
+
+    def test_book_list_status_code_and_data(self):
+        url = reverse('book-list')  # Make sure your url name is correct
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('Test Book', str(response.data))  # Checks response.data content
